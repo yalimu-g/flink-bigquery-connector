@@ -42,7 +42,7 @@ if [ "$MODE" == "bounded" ]
 then
   echo [LOGS: "$PROJECT_NAME"."$DATASET_NAME"."$SOURCE" Write Test in Bounded mode] Created JOB ID: "$JOB_ID"
   # Modify the destination table name.
-  DESTINATION_TABLE_NAME="$SOURCE"-"$timestamp"
+  DESTINATION_TABLE_NAME="$DESTINATION_TABLE_NAME"-"$timestamp"
   if [ "$IS_SQL" == True ]
   then
     echo "SQL Mode is Enabled!"

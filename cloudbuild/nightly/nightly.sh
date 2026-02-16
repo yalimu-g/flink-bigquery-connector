@@ -83,6 +83,10 @@ case $STEP in
     export GCS_1_17_JAR_LOCATION="$GCS_JAR_LOCATION"/"$timestamp"/"1.17"/"$GCS_JAR_NAME"
     export GCS_2_1_JAR_LOCATION="$GCS_JAR_LOCATION"/"$timestamp"/"2.1"/"$GCS_JAR_NAME"
 
+    # Write JAR locations to files for persistence across steps
+    echo "$GCS_1_17_JAR_LOCATION" > /workspace/gcs_1_17_jar_location.txt
+    echo "$GCS_2_1_JAR_LOCATION" > /workspace/gcs_2_1_jar_location.txt
+
     # Extract revision from pom.xml
     RELEASE_VERSION=$($MVN help:evaluate -Dexpression=project.version -q -DforceStdout)
     # Construct the path to the JAR in the local maven repository
@@ -134,7 +138,7 @@ case $STEP in
 
   # Run the nested schema bounded e2e test.
   e2e_bounded_nested_schema_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     IS_SQL=False
     ENABLE_TABLE_CREATION=True
     IS_EXACTLY_ONCE_ENABLED=True
@@ -144,7 +148,7 @@ case $STEP in
 
   # Run the nested schema bounded Table API e2e test.
   e2e_bounded_table_api_nested_schema_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     IS_SQL=True
     ENABLE_TABLE_CREATION=True
     IS_EXACTLY_ONCE_ENABLED=False
@@ -154,7 +158,7 @@ case $STEP in
 
   # Run the all datatypes bounded Table API e2e test.
   e2e_bounded_table_api_all_datatypes_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     IS_SQL=True
     ENABLE_TABLE_CREATION=True
     IS_EXACTLY_ONCE_ENABLED=False
@@ -164,7 +168,7 @@ case $STEP in
 
   # Run the large table bounded e2e test.
   e2e_bounded_large_table_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     # Run the large table test.
     IS_EXACTLY_ONCE_ENABLED=True
     run_read_write_test "$PROJECT_ID" "$REGION_LARGE_TABLE_TEST_FILE" "$CLUSTER_LARGE_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "$TABLE_NAME_SOURCE_LARGE_TABLE" "$TABLE_NAME_DESTINATION_LARGE_TABLE" "$IS_EXACTLY_ONCE_ENABLED" "bounded" "$PROPERTIES_LARGE_BOUNDED_JOB" "$SINK_PARALLELISM_LARGE_BOUNDED_JOB"
@@ -173,7 +177,7 @@ case $STEP in
 
   # Run the Table API large table bounded e2e test.
   e2e_bounded_table_api_large_table_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     # Run the large table test.
     IS_SQL=True
     IS_EXACTLY_ONCE_ENABLED=False
@@ -183,7 +187,7 @@ case $STEP in
 
   # Run the unbounded e2e test.
   e2e_unbounded_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     IS_EXACTLY_ONCE_ENABLED=False
     run_read_write_test "$PROJECT_ID" "$REGION_UNBOUNDED_TABLE_TEST_FILE" "$CLUSTER_UNBOUNDED_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "$GCS_SOURCE_URI" "$TABLE_NAME_DESTINATION_UNBOUNDED_TABLE" "$IS_EXACTLY_ONCE_ENABLED" "unbounded" "$PROPERTIES_UNBOUNDED_JOB" "$SINK_PARALLELISM_UNBOUNDED_JOB"
     exit
@@ -191,7 +195,7 @@ case $STEP in
 
   # Run the Table API unbounded e2e test.
   e2e_table_api_unbounded_test)
-    export GCS_JAR_LOCATION="$GCS_1_17_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_1_17_jar_location.txt)
     IS_SQL=True
     IS_EXACTLY_ONCE_ENABLED=True
     run_read_write_test "$PROJECT_ID" "$REGION_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$CLUSTER_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "$GCS_SOURCE_URI" "$TABLE_NAME_DESTINATION_UNBOUNDED_TABLE" "$IS_EXACTLY_ONCE_ENABLED" "unbounded" "$PROPERTIES_UNBOUNDED_JOB" "$SINK_PARALLELISM_UNBOUNDED_JOB" "$IS_SQL"
@@ -200,7 +204,7 @@ case $STEP in
 
   # Run the nested schema bounded e2e test for flink_2.1.
   e2e_bounded_nested_schema_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     IS_SQL=False
     ENABLE_TABLE_CREATION=True
     IS_EXACTLY_ONCE_ENABLED=True
@@ -210,7 +214,7 @@ case $STEP in
 
   # Run the nested schema bounded Table API e2e test for flink_2.1.
   e2e_bounded_table_api_nested_schema_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     IS_SQL=True
     ENABLE_TABLE_CREATION=True
     IS_EXACTLY_ONCE_ENABLED=False
@@ -220,7 +224,7 @@ case $STEP in
 
   # Run the all datatypes bounded Table API e2e test for flink_2.1.
   e2e_bounded_table_api_all_datatypes_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     IS_SQL=True
     ENABLE_TABLE_CREATION=True
     IS_EXACTLY_ONCE_ENABLED=False
@@ -230,7 +234,7 @@ case $STEP in
 
   # Run the large table bounded e2e test for flink_2.1.
   e2e_bounded_large_table_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     # Run the large table test.
     IS_EXACTLY_ONCE_ENABLED=True
     run_read_write_test "$PROJECT_ID" "$REGION_LARGE_TABLE_TEST_FILE" "$CLUSTER_LARGE_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "${TABLE_NAME_SOURCE_LARGE_TABLE}_2_1" "${TABLE_NAME_DESTINATION_LARGE_TABLE}_2_1" "$IS_EXACTLY_ONCE_ENABLED" "bounded" "$PROPERTIES_LARGE_BOUNDED_JOB" "$SINK_PARALLELISM_LARGE_BOUNDED_JOB"
@@ -239,7 +243,7 @@ case $STEP in
 
   # Run the Table API large table bounded e2e test for flink_2.1.
   e2e_bounded_table_api_large_table_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     # Run the large table test.
     IS_SQL=True
     IS_EXACTLY_ONCE_ENABLED=False
@@ -249,7 +253,7 @@ case $STEP in
 
   # Run the unbounded e2e test for flink_2.1.
   e2e_unbounded_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     IS_EXACTLY_ONCE_ENABLED=False
     run_read_write_test "$PROJECT_ID" "$REGION_UNBOUNDED_TABLE_TEST_FILE" "$CLUSTER_UNBOUNDED_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "$GCS_SOURCE_URI" "${TABLE_NAME_DESTINATION_UNBOUNDED_TABLE}_2_1" "$IS_EXACTLY_ONCE_ENABLED" "unbounded" "$PROPERTIES_UNBOUNDED_JOB" "$SINK_PARALLELISM_UNBOUNDED_JOB"
     exit
@@ -257,7 +261,7 @@ case $STEP in
 
   # Run the Table API unbounded e2e test for flink_2.1.
   e2e_table_api_unbounded_test_2_1)
-    export GCS_JAR_LOCATION="$GCS_2_1_JAR_LOCATION"
+    export GCS_JAR_LOCATION=$(cat /workspace/gcs_2_1_jar_location.txt)
     IS_SQL=True
     IS_EXACTLY_ONCE_ENABLED=True
     run_read_write_test "$PROJECT_ID" "$REGION_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$CLUSTER_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "$GCS_SOURCE_URI" "${TABLE_NAME_DESTINATION_UNBOUNDED_TABLE}_2_1" "$IS_EXACTLY_ONCE_ENABLED" "unbounded" "$PROPERTIES_UNBOUNDED_JOB" "$SINK_PARALLELISM_UNBOUNDED_JOB" "$IS_SQL"

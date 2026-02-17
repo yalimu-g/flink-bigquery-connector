@@ -67,7 +67,7 @@ steps:
       - 'CLUSTER_LARGE_TABLE_TEST_FILE=${_CLUSTER_LARGE_TABLE_TEST_FILE}_2_1'
       - 'WORKER_MACHINE_TYPE_LARGE_BOUNDED=${_WORKER_MACHINE_TYPE_LARGE_BOUNDED}'
 
-# 3.3 Create the dataproc cluster - for unbounded test.
+# 3.2 Create the dataproc cluster - for large table bounded test
   - name: 'gcr.io/$PROJECT_ID/dataproc-flink-bigquery-connector-nightly'
     id: 'create-clusters-bounded-large-table'
     waitFor: ['init']
@@ -101,7 +101,7 @@ steps:
       - 'CLUSTER_UNBOUNDED_TABLE_TEST_FILE=${_CLUSTER_UNBOUNDED_TABLE_TEST_FILE}_2_1'
       - 'WORKER_MACHINE_TYPE_UNBOUNDED=${_WORKER_MACHINE_TYPE_UNBOUNDED}'
 
-# 3.4 Create the dataproc cluster - for table api large table bounded test.
+# 3.3 Create the dataproc cluster - for unbounded test.
   - name: 'gcr.io/$PROJECT_ID/dataproc-flink-bigquery-connector-nightly'
     id: 'create-clusters-unbounded-table'
     waitFor: ['init']
@@ -135,7 +135,7 @@ steps:
       - 'CLUSTER_TABLE_API_LARGE_TABLE_TEST_FILE=${_CLUSTER_TABLE_API_LARGE_TABLE_TEST_FILE}_2_1'
       - 'WORKER_MACHINE_TYPE_LARGE_BOUNDED=${_WORKER_MACHINE_TYPE_LARGE_BOUNDED}'
 
-# 3.5 Create the dataproc cluster - for table api unbounded test.
+# 3.4 Create the dataproc cluster - for table api large table bounded test.
   - name: 'gcr.io/$PROJECT_ID/dataproc-flink-bigquery-connector-nightly'
     id: 'create-clusters-table-api-bounded-large-table'
     waitFor: ['init']
@@ -169,7 +169,7 @@ steps:
       - 'CLUSTER_TABLE_API_UNBOUNDED_TABLE_TEST_FILE=${_CLUSTER_TABLE_API_UNBOUNDED_TABLE_TEST_FILE}_2_1'
       - 'WORKER_MACHINE_TYPE_UNBOUNDED=${_WORKER_MACHINE_TYPE_UNBOUNDED}'
 
-# 4. Nested schema e2e test.
+# 3.5 Create the dataproc cluster - for table api unbounded test.
   - name: 'gcr.io/$PROJECT_ID/dataproc-flink-bigquery-connector-nightly'
     id: 'create-clusters-table-api-unbounded-table'
     waitFor: ['init']

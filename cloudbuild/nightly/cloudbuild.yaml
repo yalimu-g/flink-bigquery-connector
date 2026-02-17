@@ -18,6 +18,20 @@ steps:
 
 # 3.1 Create the dataproc cluster - for small bounded tests
   - name: 'gcr.io/$PROJECT_ID/dataproc-flink-bigquery-connector-nightly'
+    id: 'create-clusters-bounded-small-table'
+    waitFor: ['init']
+    entrypoint: 'bash'
+    args: ['/workspace/cloudbuild/nightly/nightly.sh', 'create_clusters_bounded_small_table']
+    env:
+      - 'PROJECT_ID=${_PROJECT_ID}'
+      - 'DATAPROC_IMAGE_VERSION=${_DATAPROC_IMAGE_VERSION}'
+      - 'NUM_WORKERS_SMALL_TEST=${_NUM_WORKERS_SMALL_TEST}'
+      - 'CLUSTER_NAME_SMALL_TEST=${_CLUSTER_NAME_SMALL_TEST}'
+      - 'REGION_ARRAY_STRING_SMALL_TEST=${_REGION_ARRAY_STRING_SMALL_TEST}'
+      - 'INITIALISATION_ACTION_SCRIPT_URI=${_INITIALISATION_ACTION_SCRIPT_URI}'
+      - 'REGION_SMALL_TEST_FILE=${_REGION_SMALL_TEST_FILE}'
+      - 'CLUSTER_SMALL_TEST_FILE=${_CLUSTER_SMALL_TEST_FILE}'
+      - 'WORKER_MACHINE_TYPE_SMALL_BOUNDED=${_WORKER_MACHINE_TYPE_SMALL_BOUNDED}'
 
 # 3.1.1 Create the dataproc cluster - for small bounded tests (Flink 2.1)
   - name: 'gcr.io/$PROJECT_ID/dataproc-flink-bigquery-connector-nightly'
@@ -34,22 +48,6 @@ steps:
       - 'INITIALISATION_ACTION_SCRIPT_URI=${_INITIALISATION_ACTION_SCRIPT_URI_FLINK_2_1}'
       - 'REGION_SMALL_TEST_FILE=${_REGION_SMALL_TEST_FILE}_2_1'
       - 'CLUSTER_SMALL_TEST_FILE=${_CLUSTER_SMALL_TEST_FILE}_2_1'
-      - 'WORKER_MACHINE_TYPE_SMALL_BOUNDED=${_WORKER_MACHINE_TYPE_SMALL_BOUNDED}'
-
-# 3.2 Create the dataproc cluster - for large table bounded test
-    id: 'create-clusters-bounded-small-table'
-    waitFor: ['init']
-    entrypoint: 'bash'
-    args: ['/workspace/cloudbuild/nightly/nightly.sh', 'create_clusters_bounded_small_table']
-    env:
-      - 'PROJECT_ID=${_PROJECT_ID}'
-      - 'DATAPROC_IMAGE_VERSION=${_DATAPROC_IMAGE_VERSION}'
-      - 'NUM_WORKERS_SMALL_TEST=${_NUM_WORKERS_SMALL_TEST}'
-      - 'CLUSTER_NAME_SMALL_TEST=${_CLUSTER_NAME_SMALL_TEST}'
-      - 'REGION_ARRAY_STRING_SMALL_TEST=${_REGION_ARRAY_STRING_SMALL_TEST}'
-      - 'INITIALISATION_ACTION_SCRIPT_URI=${_INITIALISATION_ACTION_SCRIPT_URI}'
-      - 'REGION_SMALL_TEST_FILE=${_REGION_SMALL_TEST_FILE}'
-      - 'CLUSTER_SMALL_TEST_FILE=${_CLUSTER_SMALL_TEST_FILE}'
       - 'WORKER_MACHINE_TYPE_SMALL_BOUNDED=${_WORKER_MACHINE_TYPE_SMALL_BOUNDED}'
 
 # 3.2.1 Create the dataproc cluster - for large table bounded test (Flink 2.1)

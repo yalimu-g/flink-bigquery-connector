@@ -19,7 +19,7 @@ REGION_ARRAY_STRING=$2
 NUM_WORKERS=$3
 REGION_SAVING_FILE=$4
 WORKER_MACHINE_TYPE=$5
-
+INITIALISATION_ACTION_SCRIPT_URI=$6
 
 # Set the project, location and zone for the cluster creation.
 gcloud config set project "$PROJECT_ID"

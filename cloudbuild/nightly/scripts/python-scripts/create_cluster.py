@@ -66,8 +66,8 @@ def create_cluster(project_id, region, cluster_name, num_workers, dataproc_image
         result = operation.result()
         logging.info(result)
         return True
-    except Exception as _:
-        logging.info(f'Could not create cluster {cluster} in {region}')
+    except Exception as e:
+        logging.error(f'Error creating cluster {cluster_name} in {region}: {e}')
         return False
 
 

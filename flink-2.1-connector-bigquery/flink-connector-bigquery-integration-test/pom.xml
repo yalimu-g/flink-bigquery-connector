@@ -66,12 +66,6 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-core</artifactId>
-            <version>${flink.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.flink</groupId>
             <artifactId>flink-avro</artifactId>
             <version>${flink.version}</version>
             <scope>compile</scope>
@@ -109,9 +103,10 @@ under the License.
                             </transformers>
                             <artifactSet combine.self="override">
                                 <includes>
-
-                                    <include>com.google.*:*</include>
+                                    <include>org.apache.flink:flink-connector-bigquery</include>
                                     <include>org.apache.flink:flink-avro</include>
+                                    <include>org.apache.flink:flink-metrics-dropwizard</include>
+                                    <include>com.google.*:*</include>
                                     <include>commons-codec:commons-codec</include>    
                                     <include>dev.failsafe:*</include>                                
                                     <include>org.apache.avro:*</include>
@@ -148,6 +143,12 @@ under the License.
                                         <exclude>META-INF/*.RSA</exclude>
                                         <exclude>module-info.class</exclude>
                                     </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.apache.flink:flink-connector-bigquery-integration*</artifact>
+                                    <includes>
+                                        <include>com/google/cloud/flink/bigquery/integration/**</include>
+                                    </includes>
                                 </filter>
                             </filters>
                         </configuration>

@@ -79,7 +79,7 @@ case $STEP in
   # Download maven and all the dependencies
   init)
     # Build flink-1.17 modules
-    $MVN clean install -DskipTests -Pflink_1.17
+    $MVN clean install -DskipTests -Pflink_1.17 -Dflink.version=1.17.2
 
     # Build flink-2.1 modules, forcing the correct Flink version
     $MVN clean install -DskipTests -Pflink_2.1 -Dflink.version=2.1.0

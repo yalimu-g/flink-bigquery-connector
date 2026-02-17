@@ -1,6 +1,7 @@
 # Release Notes
 
 ## Next
+* PR #261: Add Flink 2.1 integration tests in nightly build.
 
 ## 1.1.0 - 2026-02-11
 * PR #260: Upgrade dependencies versions.

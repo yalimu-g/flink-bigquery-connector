@@ -78,7 +78,11 @@ delete_cluster(){
 case $STEP in
   # Download maven and all the dependencies
   init)
-    $MVN clean install -DskipTests -Pflink_1.17,flink_2.1
+    # Build flink-1.17 modules
+    $MVN clean install -DskipTests -Pflink_1.17 -pl flink-1.17-connector-bigquery
+
+    # Build flink-2.1 modules, forcing the correct Flink version
+    $MVN clean install -DskipTests -Pflink_2.1 -pl flink-2.1-connector-bigquery -Dflink.version=2.1.0
 
     timestamp=$(date +"%Y%m%d%H%M%S")
     export GCS_1_17_JAR_LOCATION="$GCS_JAR_LOCATION"/"$timestamp"/"1.17"/"$GCS_JAR_NAME"

@@ -29,13 +29,14 @@ create_cluster(){
   WORKER_MACHINE_TYPE=$5
   CLUSTER_FILE=$6
   INITIALISATION_ACTION_SCRIPT_URI=$7
+  DATAPROC_IMAGE_VERSION=${8:-""} # New parameter with default empty string
    #  Get the timestamp to append to cluster name.
   timestamp=$(date +"%Y%m%d%H%M%S")
   # 1. Create the first cluster for bounded read.
   # - Modify the cluster name for all tests.
   CLUSTER_NAME="$CLUSTER_NAME"-"$timestamp"
   # - call script that creates cluster with retries.
-  source cloudbuild/nightly/scripts/create_dataproc_cluster.sh "$CLUSTER_NAME" "$REGION_ARRAY_STRING" "$NUM_WORKERS" "$REGION_FILE" "$WORKER_MACHINE_TYPE" "$INITIALISATION_ACTION_SCRIPT_URI"
+  source cloudbuild/nightly/scripts/create_dataproc_cluster.sh "$CLUSTER_NAME" "$REGION_ARRAY_STRING" "$NUM_WORKERS" "$REGION_FILE" "$WORKER_MACHINE_TYPE" "$INITIALISATION_ACTION_SCRIPT_URI" "$DATAPROC_IMAGE_VERSION"
   # - save the cluster for future uses
   echo "$CLUSTER_NAME" > "$CLUSTER_FILE"
 }
@@ -204,6 +205,36 @@ case $STEP in
     IS_SQL=True
     IS_EXACTLY_ONCE_ENABLED=True
     run_read_write_test "$PROJECT_ID" "$REGION_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$CLUSTER_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$PROJECT_NAME" "$DATASET_NAME" "$GCS_SOURCE_URI" "${TABLE_NAME_DESTINATION_UNBOUNDED_TABLE}_1_17" "$IS_EXACTLY_ONCE_ENABLED" "unbounded" "$PROPERTIES_UNBOUNDED_JOB" "$SINK_PARALLELISM_UNBOUNDED_JOB" "$IS_SQL"
+    exit
+    ;;
+
+  # Create the cluster - Small Read-Write bounded job for flink_2.1.
+  create_clusters_bounded_small_table_2_1)
+    create_cluster "$CLUSTER_NAME_SMALL_TEST" "$REGION_ARRAY_STRING_SMALL_TEST" "$NUM_WORKERS_SMALL_TEST" "$REGION_SMALL_TEST_FILE" "$WORKER_MACHINE_TYPE_SMALL_BOUNDED" "$CLUSTER_SMALL_TEST_FILE" "" "2.1.41-debian11"
+    exit
+    ;;
+
+  # Create the cluster - Large Table Read-Write bounded job for flink_2.1.
+  create_clusters_bounded_large_table_2_1)
+    create_cluster "$CLUSTER_NAME_LARGE_TABLE_TEST" "$REGION_ARRAY_STRING_LARGE_TABLE_TEST" "$NUM_WORKERS_LARGE_TABLE_TEST" "$REGION_LARGE_TABLE_TEST_FILE" "$WORKER_MACHINE_TYPE_LARGE_BOUNDED" "$CLUSTER_LARGE_TABLE_TEST_FILE" "" "2.1.41-debian11"
+    exit
+    ;;
+
+  # Create the cluster - Large Table Read-Write bounded job for flink_2.1.
+  create_clusters_table_api_bounded_large_table_2_1)
+    create_cluster "$CLUSTER_NAME_TABLE_API_LARGE_TABLE_TEST" "$REGION_ARRAY_STRING_TABLE_API_LARGE_TABLE_TEST" "$NUM_WORKERS_LARGE_TABLE_TEST" "$REGION_TABLE_API_LARGE_TABLE_TEST_FILE" "$WORKER_MACHINE_TYPE_LARGE_BOUNDED" "$CLUSTER_TABLE_API_LARGE_TABLE_TEST_FILE" "" "2.1.41-debian11"
+    exit
+    ;;
+
+  # Create the cluster - Unbounded Read-Write job for flink_2.1.
+  create_clusters_unbounded_table_2_1)
+    create_cluster "$CLUSTER_NAME_UNBOUNDED_TABLE_TEST" "$REGION_ARRAY_STRING_UNBOUNDED_TABLE_TEST" "$NUM_WORKERS_UNBOUNDED_TABLE_TEST" "$REGION_UNBOUNDED_TABLE_TEST_FILE" "$WORKER_MACHINE_TYPE_UNBOUNDED" "$CLUSTER_UNBOUNDED_TABLE_TEST_FILE" "" "2.1.41-debian11"
+    exit
+    ;;
+
+  # Create the cluster - Table API Unbounded Read-Write job for flink_2.1.
+  create_clusters_table_api_unbounded_table_2_1)
+    create_cluster "$CLUSTER_NAME_TABLE_API_UNBOUNDED_TABLE_TEST" "$REGION_ARRAY_STRING_TABLE_API_UNBOUNDED_TABLE_TEST" "$NUM_WORKERS_UNBOUNDED_TABLE_TEST" "$REGION_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "$WORKER_MACHINE_TYPE_UNBOUNDED" "$CLUSTER_TABLE_API_UNBOUNDED_TABLE_TEST_FILE" "" "2.1.41-debian11"
     exit
     ;;
 

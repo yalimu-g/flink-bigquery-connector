@@ -113,6 +113,7 @@ under the License.
                                 <includes>
                                     <!-- org.apache.flink artifacts are PROVIDED except for formats -->
                                     <include>org.apache.flink:flink-avro</include>
+                                    <include>org.apache.flink:flink-util</include>
                                     <include>com.google.*:*</include>
                                     <include>commons-codec:commons-codec</include>    
                                     <include>dev.failsafe:*</include>                                

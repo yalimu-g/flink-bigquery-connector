@@ -29,6 +29,7 @@ create_cluster(){
   WORKER_MACHINE_TYPE=$5
   CLUSTER_FILE=$6
   INITIALISATION_ACTION_SCRIPT_URI=$7
+  DATAPROC_IMAGE_VERSION=${8:-""} # Default to empty string if not provided
   DATAPROC_IMAGE_VERSION=${8:-""} # New parameter with default empty string
    #  Get the timestamp to append to cluster name.
   timestamp=$(date +"%Y%m%d%H%M%S")

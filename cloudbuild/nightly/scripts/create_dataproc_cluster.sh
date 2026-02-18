@@ -31,4 +31,4 @@ if [[ -n "${INITIALISATION_ACTION_SCRIPT_URI}" ]]; then
   INIT_ACTION_ARG="--initialisation_action_script_uri ${INITIALISATION_ACTION_SCRIPT_URI}"
 fi
 
-python3 cloudbuild/nightly/scripts/python-scripts/create_cluster.py -- --region_array_string "${REGION_ARRAY_STRING}" --project_id "${GCP_PROJECT}" --cluster_name "${CLUSTER_NAME}" --dataproc_image_version "${DATAPROC_IMAGE_VERSION}" --num_workers "${NUM_WORKERS}" ${INIT_ACTION_ARG} --region_saving_file "${REGION_SAVING_FILE}" --worker_machine_type "${WORKER_MACHINE_TYPE}"
+python3 cloudbuild/nightly/scripts/python-scripts/create_cluster.py -- --region_array_string "${REGION_ARRAY_STRING}" --project_id "${PROJECT_ID}" --cluster_name "${CLUSTER_NAME}" --dataproc_image_version "${DATAPROC_IMAGE_VERSION}" --num_workers "${NUM_WORKERS}" ${INIT_ACTION_ARG} --region_saving_file "${REGION_SAVING_FILE}" --worker_machine_type "${WORKER_MACHINE_TYPE}"

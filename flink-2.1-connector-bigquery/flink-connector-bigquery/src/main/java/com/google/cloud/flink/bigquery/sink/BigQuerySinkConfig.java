@@ -80,6 +80,7 @@ public class BigQuerySinkConfig<IN> {
     private final String cdcMaxStaleness;
     private final CdcChangeTypeProvider<?> cdcChangeTypeProvider;
     private final String temporaryGcsBucket;
+    private final boolean persistentGcsBucket;
 
     public static <IN> Builder<IN> newBuilder() {
         return new Builder<>();
@@ -103,6 +104,9 @@ public class BigQuerySinkConfig<IN> {
                 cdcSequenceField,
                 cdcPrimaryKeyColumns,
                 cdcMaxStaleness,
+                cdcChangeTypeProvider,
+                temporaryGcsBucket,
+                persistentGcsBucket);
                 cdcChangeTypeProvider);
     }
 
@@ -136,7 +140,8 @@ public class BigQuerySinkConfig<IN> {
                         this.getCdcPrimaryKeyColumns(), object.getCdcPrimaryKeyColumns()))
                 && (Objects.equals(this.getCdcMaxStaleness(), object.getCdcMaxStaleness()))
                 && (Objects.equals(
-                        this.getCdcChangeTypeProvider(), object.getCdcChangeTypeProvider())));
+                        this.getCdcChangeTypeProvider(), object.getCdcChangeTypeProvider()))
+                && (this.persistentGcsBucket == object.persistentGcsBucket));
     }
 
     private BigQuerySinkConfig(
@@ -155,7 +160,9 @@ public class BigQuerySinkConfig<IN> {
             String cdcSequenceField,
             List<String> cdcPrimaryKeyColumns,
             String cdcMaxStaleness,
-            CdcChangeTypeProvider<?> cdcChangeTypeProvider) {
+            CdcChangeTypeProvider<?> cdcChangeTypeProvider,
+            String temporaryGcsBucket,
+            boolean persistentGcsBucket) {
         this.connectOptions = connectOptions;
         this.deliveryGuarantee = deliveryGuarantee;
         this.schemaProvider = schemaProvider;
@@ -173,6 +180,7 @@ public class BigQuerySinkConfig<IN> {
         this.cdcMaxStaleness = cdcMaxStaleness;
         this.cdcChangeTypeProvider = cdcChangeTypeProvider;
         this.temporaryGcsBucket = temporaryGcsBucket;
+        this.persistentGcsBucket = persistentGcsBucket;
     }
 
     public BigQueryConnectOptions getConnectOptions() {
@@ -239,6 +247,10 @@ public class BigQuerySinkConfig<IN> {
         return cdcChangeTypeProvider;
     }
 
+    public boolean getPersistentGcsBucket() {
+        return persistentGcsBucket;
+    }
+
     /**
      * Builder for BigQuerySinkConfig.
      *
@@ -265,6 +277,7 @@ public class BigQuerySinkConfig<IN> {
         private String cdcMaxStaleness;
         private CdcChangeTypeProvider<IN> cdcChangeTypeProvider;
         private String temporaryGcsBucket;
+        private boolean persistentGcsBucket;
 
         public Builder<IN> connectOptions(BigQueryConnectOptions connectOptions) {
             this.connectOptions = connectOptions;
@@ -352,6 +365,11 @@ public class BigQuerySinkConfig<IN> {
             return this;
         }
 
+        public Builder<IN> persistentGcsBucket(boolean persistentGcsBucket) {
+            this.persistentGcsBucket = persistentGcsBucket;
+            return this;
+        }
+
         public BigQuerySinkConfig<IN> build() {
             if (writeMode == WriteMode.INDIRECT) {
                 validateIndirect(
@@ -382,7 +400,8 @@ public class BigQuerySinkConfig<IN> {
                     cdcSequenceField,
                     cdcPrimaryKeyColumns,
                     cdcMaxStaleness,
-                    cdcChangeTypeProvider);
+                    cdcChangeTypeProvider,
+                    persistentGcsBucket);
         }
     }
 
@@ -440,7 +459,8 @@ public class BigQuerySinkConfig<IN> {
                 cdcSequenceField,
                 cdcPrimaryKeyColumns,
                 cdcMaxStaleness,
-                cdcChangeTypeProvider);
+                cdcChangeTypeProvider,
+                false);
     }
 
     public static void validateStreamExecutionEnvironment(StreamExecutionEnvironment env) {

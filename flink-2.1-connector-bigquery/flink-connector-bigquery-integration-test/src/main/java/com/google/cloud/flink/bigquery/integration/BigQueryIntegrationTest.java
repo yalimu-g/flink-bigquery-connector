@@ -361,6 +361,9 @@ public class BigQueryIntegrationTest {
                     case "bounded":
                         sourceDatasetName = parameterTool.getRequired("bq-source-dataset");
                         sourceTableName = parameterTool.getRequired("bq-source-table");
+                        String tempGcsBucket = parameterTool.get("temporary-gcs-bucket");
+                        boolean persistentGcsBucket =
+                                parameterTool.getBoolean("persistent-gcs-bucket", false);
                         runBoundedFlinkJobWithSink(
                                 sourceGcpProjectName,
                                 sourceDatasetName,
@@ -371,6 +374,8 @@ public class BigQueryIntegrationTest {
                                 isExactlyOnceEnabled,
                                 sinkParallelism,
                                 enableTableCreation,
+                                tempGcsBucket,
+                                persistentGcsBucket,
                                 matProject,
                                 matDataset,
                                 billProject);
@@ -428,6 +433,8 @@ public class BigQueryIntegrationTest {
             boolean exactlyOnce,
             Integer sinkParallelism,
             boolean enableTableCreation,
+            String tempGcsBucket,
+            boolean persistentGcsBucket,
             String matProject,
             String matDataset,
             String billProject)
@@ -469,6 +476,12 @@ public class BigQueryIntegrationTest {
                                         ? DeliveryGuarantee.EXACTLY_ONCE
                                         : DeliveryGuarantee.AT_LEAST_ONCE)
                         .streamExecutionEnvironment(env);
+
+        if (tempGcsBucket != null && !tempGcsBucket.isEmpty()) {
+            sinkConfigBuilder.temporaryGcsBucket(tempGcsBucket);
+        }
+
+        sinkConfigBuilder.persistentGcsBucket(persistentGcsBucket);
 
         if (enableTableCreation) {
             sinkConfigBuilder

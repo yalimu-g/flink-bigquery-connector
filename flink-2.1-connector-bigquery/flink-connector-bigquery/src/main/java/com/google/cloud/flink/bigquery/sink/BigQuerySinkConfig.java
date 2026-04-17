@@ -79,13 +79,7 @@ public class BigQuerySinkConfig<IN> {
     private final List<String> cdcPrimaryKeyColumns;
     private final String cdcMaxStaleness;
     private final CdcChangeTypeProvider<?> cdcChangeTypeProvider;
-    private final WriteMode writeMode;
-    private final String tempGcsPath;
-    private final String tempProject;
-    private final String tempDataset;
-    private final String jobProject;
-    private final BulkWriter.Factory<IN> bulkWriterFactory;
-    private final FormatOptions formatOptions;
+    private final String temporaryGcsBucket;
 
     public static <IN> Builder<IN> newBuilder() {
         return new Builder<>();
@@ -109,18 +103,7 @@ public class BigQuerySinkConfig<IN> {
                 cdcSequenceField,
                 cdcPrimaryKeyColumns,
                 cdcMaxStaleness,
-                cdcChangeTypeProvider,
-                writeMode,
-                tempGcsPath,
-                tempProject,
-                tempDataset,
-                jobProject,
-                bulkWriterFactory,
-                formatOptions);
-    }
-
-    private static Class<?> serializerClass(BigQuerySinkConfig<?> config) {
-        return config.getSerializer() == null ? null : config.getSerializer().getClass();
+                cdcChangeTypeProvider);
     }
 
     @Override
@@ -153,14 +136,7 @@ public class BigQuerySinkConfig<IN> {
                         this.getCdcPrimaryKeyColumns(), object.getCdcPrimaryKeyColumns()))
                 && (Objects.equals(this.getCdcMaxStaleness(), object.getCdcMaxStaleness()))
                 && (Objects.equals(
-                        this.getCdcChangeTypeProvider(), object.getCdcChangeTypeProvider()))
-                && (this.writeMode == object.writeMode)
-                && (Objects.equals(this.tempGcsPath, object.tempGcsPath))
-                && (Objects.equals(this.tempProject, object.tempProject))
-                && (Objects.equals(this.tempDataset, object.tempDataset))
-                && (Objects.equals(this.jobProject, object.jobProject))
-                && (Objects.equals(this.bulkWriterFactory, object.bulkWriterFactory))
-                && (Objects.equals(this.formatOptions, object.formatOptions)));
+                        this.getCdcChangeTypeProvider(), object.getCdcChangeTypeProvider())));
     }
 
     private BigQuerySinkConfig(
@@ -179,14 +155,7 @@ public class BigQuerySinkConfig<IN> {
             String cdcSequenceField,
             List<String> cdcPrimaryKeyColumns,
             String cdcMaxStaleness,
-            CdcChangeTypeProvider<?> cdcChangeTypeProvider,
-            WriteMode writeMode,
-            String tempGcsPath,
-            String tempProject,
-            String tempDataset,
-            String jobProject,
-            BulkWriter.Factory<IN> bulkWriterFactory,
-            FormatOptions formatOptions) {
+            CdcChangeTypeProvider<?> cdcChangeTypeProvider) {
         this.connectOptions = connectOptions;
         this.deliveryGuarantee = deliveryGuarantee;
         this.schemaProvider = schemaProvider;
@@ -203,13 +172,7 @@ public class BigQuerySinkConfig<IN> {
         this.cdcPrimaryKeyColumns = cdcPrimaryKeyColumns;
         this.cdcMaxStaleness = cdcMaxStaleness;
         this.cdcChangeTypeProvider = cdcChangeTypeProvider;
-        this.writeMode = writeMode;
-        this.tempGcsPath = tempGcsPath;
-        this.tempProject = tempProject;
-        this.tempDataset = tempDataset;
-        this.jobProject = jobProject;
-        this.bulkWriterFactory = bulkWriterFactory;
-        this.formatOptions = formatOptions;
+        this.temporaryGcsBucket = temporaryGcsBucket;
     }
 
     public BigQueryConnectOptions getConnectOptions() {
@@ -276,34 +239,6 @@ public class BigQuerySinkConfig<IN> {
         return cdcChangeTypeProvider;
     }
 
-    public WriteMode getWriteMode() {
-        return writeMode;
-    }
-
-    public String getTempGcsPath() {
-        return tempGcsPath;
-    }
-
-    public String getTempProject() {
-        return tempProject;
-    }
-
-    public String getTempDataset() {
-        return tempDataset;
-    }
-
-    public String getJobProject() {
-        return jobProject;
-    }
-
-    public BulkWriter.Factory<IN> getBulkWriterFactory() {
-        return bulkWriterFactory;
-    }
-
-    public FormatOptions getFormatOptions() {
-        return formatOptions;
-    }
-
     /**
      * Builder for BigQuerySinkConfig.
      *
@@ -329,13 +264,7 @@ public class BigQuerySinkConfig<IN> {
         private List<String> cdcPrimaryKeyColumns;
         private String cdcMaxStaleness;
         private CdcChangeTypeProvider<IN> cdcChangeTypeProvider;
-        private WriteMode writeMode = WriteMode.STORAGE_WRITE_API;
-        private String tempGcsPath;
-        private String tempProject;
-        private String tempDataset;
-        private String jobProject;
-        private BulkWriter.Factory<IN> bulkWriterFactory;
-        private FormatOptions formatOptions;
+        private String temporaryGcsBucket;
 
         public Builder<IN> connectOptions(BigQueryConnectOptions connectOptions) {
             this.connectOptions = connectOptions;
@@ -423,41 +352,6 @@ public class BigQuerySinkConfig<IN> {
             return this;
         }
 
-        public Builder<IN> writeMode(WriteMode writeMode) {
-            this.writeMode = writeMode;
-            return this;
-        }
-
-        public Builder<IN> tempGcsPath(String tempGcsPath) {
-            this.tempGcsPath = tempGcsPath;
-            return this;
-        }
-
-        public Builder<IN> tempProject(String tempProject) {
-            this.tempProject = tempProject;
-            return this;
-        }
-
-        public Builder<IN> tempDataset(String tempDataset) {
-            this.tempDataset = tempDataset;
-            return this;
-        }
-
-        public Builder<IN> jobProject(String jobProject) {
-            this.jobProject = jobProject;
-            return this;
-        }
-
-        public Builder<IN> bulkWriterFactory(BulkWriter.Factory<IN> bulkWriterFactory) {
-            this.bulkWriterFactory = bulkWriterFactory;
-            return this;
-        }
-
-        public Builder<IN> formatOptions(FormatOptions formatOptions) {
-            this.formatOptions = formatOptions;
-            return this;
-        }
-
         public BigQuerySinkConfig<IN> build() {
             if (writeMode == WriteMode.INDIRECT) {
                 validateIndirect(
@@ -488,14 +382,7 @@ public class BigQuerySinkConfig<IN> {
                     cdcSequenceField,
                     cdcPrimaryKeyColumns,
                     cdcMaxStaleness,
-                    cdcChangeTypeProvider,
-                    writeMode,
-                    tempGcsPath,
-                    tempProject,
-                    tempDataset,
-                    jobProject,
-                    bulkWriterFactory,
-                    formatOptions);
+                    cdcChangeTypeProvider);
         }
     }
 
@@ -553,56 +440,7 @@ public class BigQuerySinkConfig<IN> {
                 cdcSequenceField,
                 cdcPrimaryKeyColumns,
                 cdcMaxStaleness,
-                cdcChangeTypeProvider,
-                writeMode,
-                tempGcsPath,
-                tempProject,
-                tempDataset,
-                jobProject,
-                bulkWriterFactory,
-                formatOptions);
-    }
-
-    /**
-     * Validates INDIRECT-mode configuration. INDIRECT writes go through GCS-staged Parquet files +
-     * BigQuery load jobs. CDC and table-auto-creation are unsupported on that path; reject them
-     * eagerly so misconfigurations fail at job-graph build, not silently at runtime.
-     */
-    static void validateIndirect(
-            String tempGcsPath,
-            String tempProject,
-            String tempDataset,
-            String jobProject,
-            BulkWriter.Factory<?> bulkWriterFactory,
-            FormatOptions formatOptions,
-            boolean cdcEnabled,
-            boolean enableTableCreation) {
-        if (tempGcsPath == null || tempGcsPath.isEmpty()) {
-            throw new IllegalArgumentException("tempGcsPath is required for INDIRECT write mode");
-        }
-        if (tempProject == null || tempProject.isEmpty()) {
-            throw new IllegalArgumentException("tempProject is required for INDIRECT write mode");
-        }
-        if (tempDataset == null || tempDataset.isEmpty()) {
-            throw new IllegalArgumentException("tempDataset is required for INDIRECT write mode");
-        }
-        if (jobProject == null || jobProject.isEmpty()) {
-            throw new IllegalArgumentException("jobProject is required for INDIRECT write mode");
-        }
-        if (bulkWriterFactory == null) {
-            throw new IllegalArgumentException(
-                    "bulkWriterFactory is required for INDIRECT write mode");
-        }
-        if (formatOptions == null) {
-            throw new IllegalArgumentException("formatOptions is required for INDIRECT write mode");
-        }
-        if (cdcEnabled) {
-            throw new IllegalArgumentException("CDC is not supported in INDIRECT write mode");
-        }
-        if (enableTableCreation) {
-            throw new IllegalArgumentException(
-                    "Table auto-creation is not supported in INDIRECT write mode");
-        }
+                cdcChangeTypeProvider);
     }
 
     public static void validateStreamExecutionEnvironment(StreamExecutionEnvironment env) {

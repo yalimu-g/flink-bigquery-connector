@@ -38,6 +38,9 @@ import com.google.cloud.bigquery.Job;
 import com.google.cloud.bigquery.JobConfiguration;
 import com.google.cloud.bigquery.JobId;
 import com.google.cloud.bigquery.JobInfo;
+import com.google.cloud.bigquery.FormatOptions;
+import com.google.cloud.bigquery.JobInfo;
+import com.google.cloud.bigquery.LoadJobConfiguration;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.StandardSQLTypeName;
 import com.google.cloud.bigquery.TableDefinition;
@@ -595,6 +598,23 @@ public class BigQueryServicesImpl implements BigQueryServices {
         @Override
         public boolean deleteTable(TableId tableId) {
             return bigQuery.delete(tableId);
+        }
+
+        @Override
+        public void submitLoadJob(
+                String project,
+                String dataset,
+                String table,
+                List<String> sourceUris,
+                FormatOptions formatOptions) {
+            TableId tableId = TableId.of(project, dataset, table);
+            LoadJobConfiguration loadJobConfig =
+                    LoadJobConfiguration.newBuilder(tableId, sourceUris)
+                            .setFormatOptions(formatOptions)
+                            .build();
+
+            LOG.info("BigQueryClient: Submitted job LoadJobConfiguration");
+            bigQuery.create(JobInfo.of(loadJobConfig));
         }
     }
 

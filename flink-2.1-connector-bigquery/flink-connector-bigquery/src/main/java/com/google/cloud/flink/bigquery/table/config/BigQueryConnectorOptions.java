@@ -295,69 +295,10 @@ public class BigQueryConnectorOptions {
                                     + "unset after create. Run ALTER TABLE ... SET OPTIONS "
                                     + "(max_staleness = INTERVAL ...) after creation.");
 
-    /**
-     * [OPTIONAL, Sink Configuration] Write mode for the BigQuery sink. DIRECT uses the BigQuery
-     * Storage Write API. INDIRECT writes files to GCS and uses BigQuery load jobs. <br>
-     * Default: DIRECT
-     */
-    public static final ConfigOption<String> WRITE_MODE =
-            ConfigOptions.key("write.mode")
-                    .stringType()
-                    .defaultValue("STORAGE_WRITE_API")
-                    .withDescription(
-                            "Write mode: DIRECT (Storage Write API) or INDIRECT (GCS files + BigQuery load jobs)");
-
-    /**
-     * [REQUIRED for INDIRECT mode] GCS path for temporary files when using indirect writes. <br>
-     * Example: gs://my-bucket/flink-temp
-     */
-    public static final ConfigOption<String> TEMP_GCS_PATH =
-            ConfigOptions.key("write.indirect.temp-gcs-path")
+    /** [OPTIONAL, Sink Configuration] The GCS bucket to stage data before loading into BigQuery. */
+    public static final ConfigOption<String> TEMPORARY_GCS_BUCKET =
+            ConfigOptions.key("temporaryGcsBucket")
                     .stringType()
                     .noDefaultValue()
-                    .withDescription(
-                            "GCS path for temporary files (required for INDIRECT write mode)");
-
-    /**
-     * [REQUIRED for INDIRECT mode] GCP project for temporary tables created during multi-partition
-     * loads. The dataset given by {@link #WRITE_TEMP_DATASET} must exist in this project.
-     */
-    public static final ConfigOption<String> WRITE_TEMP_PROJECT =
-            ConfigOptions.key("write.indirect.temp-bigquery-project")
-                    .stringType()
-                    .noDefaultValue()
-                    .withDescription(
-                            "GCP project for temp tables created during multi-partition loads "
-                                    + "(required for INDIRECT write mode). The temp dataset must "
-                                    + "exist in this project.");
-
-    /**
-     * [REQUIRED for INDIRECT mode] Dataset for temporary tables created during multi-partition
-     * loads. Must already exist in the project given by {@link #WRITE_TEMP_PROJECT}. <br>
-     * Recommended: configure a default {@code tableExpirationMs} on this dataset (e.g. 24 h) so any
-     * temp tables left behind by failed jobs are auto-deleted by BigQuery.
-     */
-    public static final ConfigOption<String> WRITE_TEMP_DATASET =
-            ConfigOptions.key("write.indirect.temp-bigquery-dataset")
-                    .stringType()
-                    .noDefaultValue()
-                    .withDescription(
-                            "Dataset for temporary tables created during multi-partition loads "
-                                    + "(required for INDIRECT write mode). Must exist in the "
-                                    + "project given by write.indirect.temp-bigquery-project. "
-                                    + "Recommended: set a default tableExpirationMs on this "
-                                    + "dataset so BigQuery auto-deletes any temp tables left "
-                                    + "behind by failed jobs.");
-
-    /**
-     * [REQUIRED for INDIRECT mode] GCP project under which BigQuery load and copy jobs are
-     * submitted (i.e. where the jobs are listed and billed).
-     */
-    public static final ConfigOption<String> WRITE_JOB_PROJECT =
-            ConfigOptions.key("write.indirect.bigquery-job-project")
-                    .stringType()
-                    .noDefaultValue()
-                    .withDescription(
-                            "GCP project under which BigQuery load and copy jobs are submitted "
-                                    + "(required for INDIRECT write mode).");
+                    .withDescription("The GCS bucket to stage data before loading into BigQuery.");
 }

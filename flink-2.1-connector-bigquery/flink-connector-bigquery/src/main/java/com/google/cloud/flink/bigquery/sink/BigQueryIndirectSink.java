@@ -176,5 +176,46 @@ final class BigQueryIndirectSink<IN>
                                 formatOptions))
                 .name("BigQueryLoadJobOperator")
                 .forceNonParallel();
+import org.apache.flink.api.connector.sink2.Sink;
+import org.apache.flink.api.connector.sink2.SinkWriter;
+import org.apache.flink.api.connector.sink2.WriterInitContext;
+import org.apache.flink.connector.file.sink.FileSink;
+import org.apache.flink.core.fs.Path;
+import org.apache.flink.formats.avro.AvroWriters;
+
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
+
+import java.io.IOException;
+
+/**
+ * Sink to write data into BigQuery indirectly by staging data in GCS and then loading via Load Job.
+ *
+ * @param <IN> Type of input to sink.
+ */
+class BigQueryIndirectSink<IN> implements Sink<IN> {
+
+    private final BigQuerySinkConfig<IN> sinkConfig;
+
+    BigQueryIndirectSink(BigQuerySinkConfig<IN> sinkConfig) {
+        this.sinkConfig = sinkConfig;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public SinkWriter<IN> createWriter(WriterInitContext context) throws IOException {
+        String tempGcsBucket = sinkConfig.getTemporaryGcsBucket();
+        if (tempGcsBucket == null || tempGcsBucket.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "temporaryGcsBucket option must be specified for indirect write mode.");
+        }
+
+        Path outputPath = new Path(tempGcsBucket);
+        Schema schema = sinkConfig.getSchemaProvider().getAvroSchema();
+
+        FileSink<GenericRecord> gcsAvroSink =
+                FileSink.forBulkFormat(outputPath, AvroWriters.forGenericRecord(schema)).build();
+
+        return (SinkWriter<IN>) gcsAvroSink.createWriter(context);
     }
 }

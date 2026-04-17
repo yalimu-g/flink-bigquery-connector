@@ -22,6 +22,7 @@ import com.google.api.services.bigquery.model.TableSchema;
 import com.google.cloud.bigquery.Dataset;
 import com.google.cloud.bigquery.Job;
 import com.google.cloud.bigquery.JobConfiguration;
+import com.google.cloud.bigquery.FormatOptions;
 import com.google.cloud.bigquery.TableDefinition;
 import com.google.cloud.bigquery.TableId;
 import com.google.cloud.bigquery.storage.v1.CreateReadSessionRequest;
@@ -249,75 +250,19 @@ public interface BigQueryServices extends Serializable {
                 String project, String dataset, String table, TableDefinition tableDefinition);
 
         /**
-         * Function to identify if a BigQuery table is a view.
+         * Function to submit a load job to BigQuery.
          *
-         * @param project The project ID of the BigQuery dataset
+         * @param project The GCP project.
          * @param dataset The BigQuery dataset.
          * @param table The BigQuery table.
-         * @return Boolean {@code TRUE} if the table is a view or {@code FALSE} if it is not.
+         * @param sourceUris List of GCS URIs containing data to load.
+         * @param formatOptions Format options (e.g., Parquet).
          */
-        Boolean isView(String project, String dataset, String table);
-
-        /**
-         * Function to materialize a view to a temporary table.
-         *
-         * @param project The project ID of the BigQuery dataset
-         * @param dataset The BigQuery dataset.
-         * @param table The BigQuery table (view).
-         * @param selectedFields The fields to project.
-         * @param rowRestriction The row restriction filter.
-         * @param expirationHours The expiration time for the materialized table in hours.
-         * @param materializationProject The GCP project where the temp table is created.
-         * @param materializationDataset The BigQuery dataset where the temp table is created.
-         * @param billingProject The GCP project billed for the query compute.
-         * @return The name of the materialized table.
-         */
-        String materializeView(
+        void submitLoadJob(
                 String project,
                 String dataset,
                 String table,
-                List<String> selectedFields,
-                String rowRestriction,
-                Integer expirationHours,
-                String materializationProject,
-                String materializationDataset,
-                String billingProject);
-
-        /**
-         * Submit a BigQuery job (load, copy, etc.).
-         *
-         * @param project The GCP project.
-         * @param jobId The unique job ID.
-         * @param jobConfiguration The job configuration (e.g., LoadJobConfiguration,
-         *     CopyJobConfiguration).
-         * @return The created Job.
-         */
-        Job submitJob(String project, String jobId, JobConfiguration jobConfiguration);
-
-        /**
-         * Get a BigQuery job by ID.
-         *
-         * @param project The GCP project.
-         * @param jobId The job ID.
-         * @return The Job, or null if not found.
-         */
-        Job getJob(String project, String jobId);
-
-        /**
-         * Wait for a BigQuery job to complete.
-         *
-         * @param job The job to wait for.
-         * @return The completed Job.
-         * @throws InterruptedException if the wait is interrupted.
-         */
-        Job waitForJob(Job job) throws InterruptedException;
-
-        /**
-         * Delete a BigQuery table.
-         *
-         * @param tableId The table to delete.
-         * @return {@code true} if the table was deleted, {@code false} if it did not exist.
-         */
-        boolean deleteTable(TableId tableId);
+                List<String> sourceUris,
+                FormatOptions formatOptions);
     }
 }

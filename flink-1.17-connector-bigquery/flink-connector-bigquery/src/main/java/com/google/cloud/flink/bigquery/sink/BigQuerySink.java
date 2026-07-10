@@ -18,6 +18,7 @@ package com.google.cloud.flink.bigquery.sink;
 
 import org.apache.flink.api.connector.sink2.Sink;
 import org.apache.flink.connector.base.DeliveryGuarantee;
+import org.apache.flink.util.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,9 @@ public class BigQuerySink {
             validateCdcConfiguration(sinkConfig);
         }
 
+        if (!StringUtils.isNullOrWhitespaceOnly(sinkConfig.getTemporaryGcsBucket())) {
+            return new BigQueryIndirectSink<>(sinkConfig);
+        }
         if (sinkConfig.getDeliveryGuarantee() == DeliveryGuarantee.AT_LEAST_ONCE) {
             return new BigQueryDefaultSink<>(sinkConfig);
         }
